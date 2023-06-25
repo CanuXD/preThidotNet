@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewBag.Title = "Thêm sinh viên";
+}
+<br />
+<div class="container">
+    <form id="add_user" method="post">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Country</label>
+            <input type="text" name="country" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Salary</label>
+            <input type="text" name="salary" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="exampleInputPassword1">
+        </div>
+        <button id="btn-submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+<br />
+<script>
+    function Create() {
+        if (confirm("Xác nhận thêm")) {
+            let form = $('#add_user')[0];
+            let formData = new FormData(form);
+            console.log(formData);
+            $.ajax({
+                url: "/User/CreateUser",
+                method: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (result, status, xhr) {
+                    let rs = JSON.parse(result);
+                    console.log(rs);
+                    if (rs.ErrCode == 1) {
+                        toastr.success(rs.Message);
+                        setTimeout(() => location.href = "/User", 2000);
+                    }
+                    else {
+                        toastr.error(rs.Message);
+                        setTimeout(() => location.href = "/User", 20000);
+                    }
+                },
+                error: function () {
+                    toastr.error("Mất kết nối với máy chủ!");
+                }
+            });
+        }
+    }
+    $(function () {
+        $('#btn-submit').click(function () {
+            Create();
+        });
+    });
+</script>
+
+

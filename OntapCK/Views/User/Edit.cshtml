@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Chỉnh sửa";
+    string id = Request["id"];
+}
+
+<br />
+<br />
+<div class="container">
+    <input type="hidden" id="ID-Hidden" name="ID-Hidden" value="@id" />
+    <form id="form_act" method="post">
+        <div hidden class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">ID</label>
+            <input type="text" id="id" name="id" class="form-control" >
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="text" id="name" name="name" class="form-control"  aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Country</label>
+            <input type="text" id="country" name="country" class="form-control" >
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Salary</label>
+            <input type="text" id="salary" name="salary" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control">
+        </div>
+        <button id="btn_update" class="btn btn-primary">Cap nhat</button>
+    </form>
+</div>
+<br />
+<script>
+    function FillData(obj) {
+        $('#id').val(obj.id);
+        $('#name').val(obj.name);
+        $('#country').val(obj.country);
+        $('#salary').val(obj.salary);
+        $('#email').val(obj.email);
+    }
+    function GetObj() {
+        var id = $('#ID-Hidden').val();
+        $.ajax({
+            url: "/User/GetObject",
+            method: "POST",
+            data: { id },
+            success: function (result, status, xhr) {
+                let rs = JSON.parse(result);
+                console.log(rs);
+                FillData(rs);
+            },
+            error: function () {
+                toastr.error("Mất kết nối với máy chủ!");
+            }
+        });
+    }
+    // update
+    function Update() {
+        if (confirm("Xác nhận cập nhật thông tin ")) {
+            let form = $('#form_act')[0];
+            let formData = new FormData(form);
+            console.log(formData);
+            $.ajax({
+                url: "/User/UpdateUser",
+                method: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (result, status, xhr) {
+                    let rs = JSON.parse(result);
+                    console.log(rs);
+                    if (rs.ErrCode == 1) {
+                        toastr.success(rs.Message);
+                    }
+                    else {
+                        toastr.error(rs.Message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Mất kết nối với máy chủ!");
+                }
+            });
+        }
+    }
+    //
+    $(function () {
+        $('#btn_update').click(function () {
+            Update();
+        });
+        GetObj();
+    });
+</script>
+
+
